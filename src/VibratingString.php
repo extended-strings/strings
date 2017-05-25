@@ -35,7 +35,7 @@ class VibratingString
     {
         return Math::isZero($stringLength)
             ? 0
-            : $this->frequency / (1 / self::getHarmonicNumber($stringLength));
+            : $this->frequency * self::getHarmonicNumber($stringLength);
     }
 
     /**

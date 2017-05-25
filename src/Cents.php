@@ -43,7 +43,6 @@ class Cents
      */
     public static function centsToStringLength(float $cents): float
     {
-        // @todo review this
-        return 1 / (1 / pow(2, $cents / 1200));
+        return pow(2, $cents / 1200);
     }
 }
