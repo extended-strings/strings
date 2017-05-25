@@ -84,6 +84,8 @@ class VibratingStringTest extends TestCase
             [1, 5, 655], [2, 5, 655], [3, 5, 655], [4, 5, 655],
             [1, 6, 786], [5, 6, 786],
             [1, 7, 917], [2, 7, 917], [3, 7, 917], [4, 7, 917], [5, 7, 917], [6, 7, 917],
+            [99, 100, 13100], [198, 200, 13100], [396, 400, 13100],
+            [199, 200, 26200], [398, 400, 26200], [796, 800, 26200],
         ];
         $actual = array_map(function ($expectation) use ($string) {
             list($n, $d,) = $expectation;
@@ -91,12 +93,6 @@ class VibratingStringTest extends TestCase
         }, $expectations
         );
         $this->assertEquals($expectations, $actual);
-    }
-
-    public function testInvalidHarmonic()
-    {
-        $this->expectExceptionMessage('Not a harmonic node');
-        VibratingString::getHarmonicNumber(.13);
     }
 
     public function testHarmonicSeries()

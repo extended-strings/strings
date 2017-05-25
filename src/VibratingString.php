@@ -59,12 +59,7 @@ class VibratingString
      */
     public static function getHarmonicNumber(float $stringLength): int
     {
-        $gcd = Math::gcd(1, $stringLength);
-        if (1 / $gcd > 100) {
-            throw new \InvalidArgumentException(sprintf('Not a harmonic node: %.2f', $stringLength));
-        }
-
-        return 1 / $gcd;
+        return 1 / Math::gcd(1, $stringLength);
     }
 
     /**
