@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtendedStrings\Harmonics;
 
 class VibratingString
@@ -59,7 +61,7 @@ class VibratingString
      */
     public static function getHarmonicNumber(float $stringLength): int
     {
-        return 1 / Math::gcd(1, $stringLength);
+        return intval(1 / Math::gcd(1, $stringLength));
     }
 
     /**

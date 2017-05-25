@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtendedStrings\Harmonics;
 
 /**
  * A class containing functions useful for floating-point calculations.
- *
- * Depends on the bcmath extension.
  */
 class Math
 {
@@ -33,6 +33,6 @@ class Math
      */
     public static function isZero(float $x): bool
     {
-        return bccomp($x, 0, self::PRECISION) === 0;
+        return round($x, self::PRECISION) === 0.0;
     }
 }

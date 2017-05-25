@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtendedStrings\Harmonics;
 
 class Cents
@@ -43,6 +45,6 @@ class Cents
      */
     public static function centsToStringLength(float $cents): float
     {
-        return pow(2, $cents / 1200);
+        return (float) pow(2, $cents / 1200);
     }
 }
