@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics;
+namespace ExtendedStrings\Strings;
 
 /**
  * A class containing functions useful for floating-point calculations.

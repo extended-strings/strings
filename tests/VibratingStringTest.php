@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics\Tests;
+namespace ExtendedStrings\Strings\Tests;
 
-use ExtendedStrings\Harmonics\VibratingString;
+use ExtendedStrings\Strings\VibratingString;
 use PHPUnit\Framework\TestCase;
 
 class VibratingStringTest extends TestCase

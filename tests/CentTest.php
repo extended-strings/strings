@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics\Tests;
+namespace ExtendedStrings\Strings\Tests;
 
-use ExtendedStrings\Harmonics\Cent;
+use ExtendedStrings\Strings\Cent;
 use PHPUnit\Framework\TestCase;
 
 class CentTest extends TestCase

@@ -1,8 +1,8 @@
 {
-  "name": "extended-strings/harmonics",
+  "name": "extended-strings/strings",
   "autoload": {
     "psr-4": {
-      "ExtendedStrings\\Harmonics\\": "src/"
+      "ExtendedStrings\\Strings\\": "src/"
     }
   },
   "require": {

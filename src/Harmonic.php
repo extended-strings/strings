@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics;
+namespace ExtendedStrings\Strings;
 
 class Harmonic
 {
@@ -24,7 +24,7 @@ class Harmonic
     }
 
     /**
-     * @param \ExtendedStrings\Harmonics\VibratingString $string
+     * @param \ExtendedStrings\Strings\VibratingString $string
      *
      * @return float
      */

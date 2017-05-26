@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics;
+namespace ExtendedStrings\Strings;
 
 class Cent
 {

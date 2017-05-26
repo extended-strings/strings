@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendedStrings\Harmonics\Tests;
+namespace ExtendedStrings\Strings\Tests;
 
-use ExtendedStrings\Harmonics\Math;
+use ExtendedStrings\Strings\Math;
 use PHPUnit\Framework\TestCase;
 
 class MathTest extends TestCase
