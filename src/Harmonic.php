@@ -6,44 +6,35 @@ namespace ExtendedStrings\Harmonics;
 
 class Harmonic
 {
-    private $stop;
     private $halfStop;
+    private $baseStop;
 
     /**
-     * @param \ExtendedStrings\Harmonics\Stop $stop
-     * @param \ExtendedStrings\Harmonics\Stop $halfStop
+     * @param float $halfStop
+     * @param float $baseStop
      */
-    public function __construct(Stop $stop, Stop $halfStop)
+    public function __construct(float $halfStop, float $baseStop = 1.0)
     {
-        if ($halfStop->getStringLength() > $stop->getStringLength()) {
-            throw new \InvalidArgumentException('Half-stop cannot be lower than base stop');
+        if ($halfStop > $baseStop) {
+            throw new \InvalidArgumentException("The half-stop's string length cannot be longer than the base stop's.");
         }
 
-        $this->stop = $stop;
+        $this->baseStop = $baseStop;
         $this->halfStop = $halfStop;
     }
 
     /**
-     * @return bool
+     * @param \ExtendedStrings\Harmonics\VibratingString $string
+     *
+     * @return float
      */
-    public function isNatural(): bool
+    public function getSoundingPitch(VibratingString $string): float
     {
-        return $this->stop->isOpen();
-    }
+        // Transpose the half-stop onto the new string length, which was formed
+        // by the stop.
+        $pseudoString = new VibratingString($string->getStoppedFrequency($this->baseStop));
+        $pseudoHalfStop = $this->halfStop / $this->baseStop;
 
-    /**
-     * @return \ExtendedStrings\Harmonics\Stop
-     */
-    public function getStop(): Stop
-    {
-        return $this->stop;
-    }
-
-    /**
-     * @return \ExtendedStrings\Harmonics\Stop
-     */
-    public function getHalfStop(): Stop
-    {
-        return $this->halfStop;
+        return $pseudoString->getHarmonicSoundingFrequency($pseudoHalfStop);
     }
 }

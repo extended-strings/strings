@@ -60,12 +60,19 @@ class VibratingStringTest extends TestCase
             [4, 6, 3],
             [5, 6, 6],
             [6, 6, 1],
+            [99, 100, 100]
         ];
         $actual = array_map(function ($expectation) {
             list($n, $d,) = $expectation;
             return [$n, $d, VibratingString::getHarmonicNumber($n / $d)];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
+    }
+
+    public function testInvalidHarmonic()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        VibratingString::getHarmonicNumber(199 / 200);
     }
 
     public function testGetHarmonicSoundingFrequency()
@@ -79,6 +86,7 @@ class VibratingStringTest extends TestCase
          * @see http://www.phy.mtu.edu/~suits/overtone.html
          */
         $expectations = [
+            [0, 1, 0],
             [1, 1, 131],
             [1, 2, 262], [2, 4, 262],
             [1, 3, 393], [2, 3, 393], [2, 6, 393],
@@ -87,7 +95,6 @@ class VibratingStringTest extends TestCase
             [1, 6, 786], [5, 6, 786],
             [1, 7, 917], [2, 7, 917], [3, 7, 917], [4, 7, 917], [5, 7, 917], [6, 7, 917],
             [99, 100, 13100], [198, 200, 13100], [396, 400, 13100],
-            [199, 200, 26200], [398, 400, 26200], [796, 800, 26200],
         ];
         $actual = array_map(function ($expectation) use ($string) {
             list($n, $d,) = $expectation;

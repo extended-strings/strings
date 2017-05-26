@@ -21,7 +21,7 @@ class Math
      */
     public static function gcd(float $a, float $b): float
     {
-        return $b < 1 / pow(10, self::PRECISION) ? $a : self::gcd($b, fmod($a, $b));
+        return self::isZero($b) ? $a : self::gcd($b, fmod($a, $b));
     }
 
     /**
@@ -33,6 +33,6 @@ class Math
      */
     public static function isZero(float $x): bool
     {
-        return round($x, self::PRECISION) === 0.0;
+        return $x === 0 || abs($x) < pow(10, - self::PRECISION);
     }
 }

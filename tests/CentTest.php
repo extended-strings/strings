@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendedStrings\Harmonics\Tests;
 
-use ExtendedStrings\Harmonics\Cents;
+use ExtendedStrings\Harmonics\Cent;
 use PHPUnit\Framework\TestCase;
 
-class CentsTest extends TestCase
+class CentTest extends TestCase
 {
-    public function testCentsToFrequency()
+    public function testOctavesToFrequency()
     {
         $base = 440.0;
         $expectedFrequencies = [
@@ -34,7 +34,7 @@ class CentsTest extends TestCase
             4800 => 7040.0, // A8
         ];
         $actualFrequencies = array_map(function ($cents) use ($base) {
-            return round(Cents::centsToFrequency($cents, $base), 2);
+            return round(Cent::centsToFrequency($cents, $base), 2);
         }, array_combine(array_keys($expectedFrequencies), array_keys($expectedFrequencies)));
         $this->assertEquals($expectedFrequencies, $actualFrequencies);
     }

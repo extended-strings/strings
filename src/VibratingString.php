@@ -23,9 +23,12 @@ class VibratingString
      */
     public function getStoppedFrequency(float $stringLength = 1.0): float
     {
-        return Math::isZero($stringLength)
-            ? 0
-            : Cents::centsToFrequency(Cents::stringLengthToCents($stringLength), $this->frequency);
+        if (Math::isZero($stringLength)) {
+            return 0;
+        }
+        $centsOverString = Cent::frequenciesToCents($stringLength, 1);
+
+        return Cent::centsToFrequency($centsOverString, $this->frequency);
     }
 
     /**
@@ -47,9 +50,24 @@ class VibratingString
      */
     public function getStringLength(float $frequency): float
     {
-        return Math::isZero($frequency)
-            ? 0
-            : Cents::centsToStringLength(Cents::frequenciesToCents($this->frequency, $frequency));
+        if (Math::isZero($frequency)) {
+            return 0;
+        }
+        $centsOverString = Cent::frequenciesToCents($this->frequency, $frequency);
+
+        return $this->centsToStringLength($centsOverString);
+    }
+
+    /**
+     * @param float $cents
+     *   The number of cents between the open string and the stop.
+     *
+     * @return float
+     *   The length of the remaining vibrating string.
+     */
+    private function centsToStringLength(float $cents): float
+    {
+        return 1 / pow(2, $cents / 1200);
     }
 
     /**
@@ -61,7 +79,12 @@ class VibratingString
      */
     public static function getHarmonicNumber(float $stringLength): int
     {
-        return intval(1 / Math::gcd(1, $stringLength));
+        $number = intval(1 / Math::gcd(1, $stringLength));
+        if ($number > 100) {
+            throw new \InvalidArgumentException(sprintf('Invalid string length for a harmonic: %f', $stringLength));
+        }
+
+        return $number;
     }
 
     /**
