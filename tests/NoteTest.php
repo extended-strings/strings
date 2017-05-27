@@ -21,6 +21,8 @@ class NoteTest extends TestCase
             [1400, ['bb'], 'Ebb5'],
             [1450, [], 'D+5'],
             [1850, [], 'G-5'],
+            [-1, [], 'C4 -1c'],
+            [1785, [], 'F#5 -15c'],
         ];
         $actual = array_map(function ($expectation) {
             list($cents, $accidentalPreference,) = $expectation;
@@ -38,12 +40,58 @@ class NoteTest extends TestCase
             ['C+5', 1250],
             ['Db- 5', 1250],
             ['D5', 1400],
+            ['D5 -2c', 1398],
+            ['A4 +25c', 925],
         ];
         $actual = array_map(function ($expectation) {
             list($name,) = $expectation;
             $note = Note::fromName($name);
 
             return [$name, $note->getCents()];
+        }, $expectations);
+        $this->assertEquals($expectations, $actual);
+    }
+
+    public function testGetFrequency()
+    {
+        // See http://www.phy.mtu.edu/~suits/notefreqs.html for a reference.
+        // Modern pitch on the left, Baroque pitch on the right.
+        $expectations = [
+            ['A0', 440.0, 27.5],
+            ['Ab4', 440.0, 415.3],
+            ['A4', 440.0, 440.0], ['A4', 415.3, 415.3],
+            ['D5', 440.0, 587.33],
+            ['D#5', 440.0, 622.25], ['E5', 415.3, 622.25],
+            ['E5', 440.0, 659.26],
+            ['A8', 440.0, 7040.0],
+            ['B8', 440.0, 7902.13],
+        ];
+        $actual = array_map(function ($expectation) {
+            list($name, $A4, ) = $expectation;
+            $note = Note::fromName($name);
+
+            return [$name, $A4, round($note->getFrequency($A4), 2)];
+        }, $expectations);
+        $this->assertEquals($expectations, $actual);
+    }
+
+    public function testFromFrequency()
+    {
+        $expectations = [
+            ['A0', 440.0, 27.5],
+            ['G#4', 440.0, 415.3],
+            ['A4', 440.0, 440.0], ['A4', 415.3, 415.3],
+            ['D5', 440.0, 587.33],
+            ['D#5', 440.0, 622.25], ['E5', 415.3, 622.25],
+            ['E5', 440.0, 659.26],
+            ['A8', 440.0, 7040.0],
+            ['B8', 440.0, 7902.13],
+        ];
+        $actual = array_map(function ($expectation) {
+            list(, $A4, $frequency) = $expectation;
+            $note = Note::fromFrequency($frequency, $A4);
+
+            return [$note->__toString(), $A4, $frequency];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }
@@ -66,11 +114,5 @@ class NoteTest extends TestCase
     {
         $this->expectExceptionMessage('Invalid accidental');
         Note::fromName('A&');
-    }
-
-    public function testInvalidCents()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        echo Note::fromCents(1999);
     }
 }

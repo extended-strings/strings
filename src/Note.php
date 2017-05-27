@@ -65,20 +65,23 @@ class Note
     private $name;
     private $accidental;
     private $octave;
+    private $difference;
 
     /**
      * Internal constructor: use one of the factory methods to create a Note.
      *
-     * @param string $name       The note name (A-G).
-     * @param string $accidental The accidental (one of the Note::ACCIDENTAL_
-     *                           constants).
-     * @param int    $octave     The octave, in scientific pitch notation.
+     * @param string $name         The note name (A-G).
+     * @param string $accidental   The accidental (one of the Note::ACCIDENTAL_
+     *                             constants).
+     * @param int    $octave       The octave, in scientific pitch notation.
+     * @param float  $difference   The note's difference in cents from 12-TET.
      */
-    private function __construct(string $name, string $accidental, int $octave)
+    private function __construct(string $name, string $accidental, int $octave, float $difference)
     {
         $this->name = $name;
         $this->accidental = $accidental;
         $this->octave = $octave;
+        $this->difference = $difference;
     }
 
     /**
@@ -104,34 +107,42 @@ class Note
             ));
         }
         $octave = 4;
-        if (preg_match('/\-?[0-9]+$/i', $name, $matches)) {
-            $octave = intval(ltrim($matches[0]));
+        $difference = 0;
+        if (preg_match('/(\-?[0-9]+)?( ([\+-][0-9]+)c)?$/i', $name, $matches)) {
+            if (isset($matches[1])) {
+                $octave = intval($matches[1]);
+            }
+            if (isset($matches[3])) {
+                $difference = intval($matches[3]);
+            }
             $name = substr($name, 0, strlen($name) - strlen($matches[0]));
         }
         $accidental = self::normalizeAccidental($name);
 
-        return new self($noteName, $accidental, $octave);
+        return new self($noteName, $accidental, $octave, $difference);
     }
 
     /**
      * Factory to create a Note from a number of cents.
      *
-     * @param int      $cents                A number of cents above C4.
+     * @param float      $cents              A number of cents above C4.
      * @param string[] $preferredAccidentals A list of accidentals in order of
      *                                       preference. This will be merged
      *                                       with a default list.
      *
      * @return self
      */
-    public static function fromCents(int $cents, array $preferredAccidentals = []): self
+    public static function fromCents(float $cents, array $preferredAccidentals = []): self
     {
-        $octave = (int) floor($cents / 1200) + 4;
-        $centsWithoutOctave = $cents - (($octave - 4) * 1200);
+        $rounded = (int) round($cents / 50) * 50;
+        $difference = $cents - $rounded;
+        $octave = (int) floor($rounded / 1200) + 4;
+        $centsWithoutOctave = $rounded - (($octave - 4) * 1200);
         $preferredAccidentals = array_merge($preferredAccidentals, self::$preferredAccidentals);
         foreach ($preferredAccidentals as $accidental) {
             $accidentalCents = self::$accidentalCents[$accidental];
             if (($name = array_search($centsWithoutOctave - $accidentalCents, self::$names, true)) !== false) {
-                return new self((string) $name, $accidental, $octave);
+                return new self((string) $name, $accidental, $octave, $difference);
             }
         }
 
@@ -157,13 +168,38 @@ class Note
     }
 
     /**
-     * @return int The number of cents above C4.
+     * @return float The number of cents above C4.
      */
-    public function getCents(): int
+    public function getCents(): float
     {
         return self::$names[$this->name]
             + self::$accidentalCents[$this->accidental]
-            + (($this->octave - 4) * 1200);
+            + (($this->octave - 4) * 1200)
+            + $this->difference;
+    }
+
+    /**
+     * @param float $A4 The frequency of A4, for reference.
+     *
+     * @return float The frequency of the note.
+     */
+    public function getFrequency(float $A4 = 440.0): float
+    {
+        return Cent::centsToFrequency($this->getCents() - 900, $A4);
+    }
+
+    /**
+     * @param float $frequency            The frequency.
+     * @param float $A4                   The frequency of A4, for reference.
+     * @param array $preferredAccidentals Some preferred accidentals.
+     *
+     * @return self
+     */
+    public static function fromFrequency($frequency, float $A4 = 440.0, array $preferredAccidentals = []): self
+    {
+        $cents = Cent::frequenciesToCents($A4, $frequency) + 900;
+
+        return self::fromCents($cents, $preferredAccidentals);
     }
 
     /**
@@ -171,6 +207,11 @@ class Note
      */
     public function __toString(): string
     {
-        return sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
+        $output = sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
+        if (intval($this->difference) !== 0) {
+            $output .= sprintf(' %dc', $this->difference);
+        }
+
+        return $output;
     }
 }
