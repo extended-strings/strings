@@ -108,7 +108,7 @@ class Note
         }
         $octave = 4;
         $difference = 0;
-        if (preg_match('/(\-?[0-9]+)?( ([\+-][0-9]+)c)?$/i', $name, $matches)) {
+        if (preg_match('/\/?(\-?[0-9]+)?( ([\+-][0-9]+)c)?$/i', $name, $matches)) {
             if (isset($matches[1])) {
                 $octave = intval($matches[1]);
             }
@@ -209,7 +209,7 @@ class Note
     {
         $output = sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
         if (intval($this->difference) !== 0) {
-            $output .= sprintf(' %dc', $this->difference);
+            $output .= sprintf(' %+dc', $this->difference);
         }
 
         return $output;

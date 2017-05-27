@@ -42,6 +42,7 @@ class NoteTest extends TestCase
             ['D5', 1400],
             ['D5 -2c', 1398],
             ['A4 +25c', 925],
+            ['A+/4 -50c', 900],
         ];
         $actual = array_map(function ($expectation) {
             list($name,) = $expectation;
