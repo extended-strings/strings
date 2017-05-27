@@ -37,4 +37,20 @@ class Harmonic
 
         return $pseudoString->getHarmonicSoundingFrequency($pseudoHalfStop);
     }
+
+    /**
+     * @param int $limit
+     *
+     * @return float[]
+     */
+    public static function getSeries(int $limit): array
+    {
+        $series = [];
+        $base = 0;
+        for ($denominator = 1; $denominator <= $limit; $denominator++) {
+            $base = $series[$denominator] = $base + 1 / $denominator;
+        }
+
+        return $series;
+    }
 }

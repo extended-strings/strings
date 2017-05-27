@@ -79,4 +79,23 @@ class HarmonicTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         new Harmonic(.2, .1);
     }
+
+    public function testSeries()
+    {
+        /**
+         * @var array $expected
+         * The beginning of the harmonic series.
+         */
+        $expected = [
+            1 => 1,
+            2 => 1 + 1/2,
+            3 => 1 + 1/2 + 1/3,
+            4 => 1 + 1/2 + 1/3 + 1/4,
+            5 => 1 + 1/2 + 1/3 + 1/4 + 1/5,
+            6 => 1 + 1/2 + 1/3 + 1/4 + 1/5 + 1/6,
+            7 => 1 + 1/2 + 1/3 + 1/4 + 1/5 + 1/6 + 1/7,
+            8 => 1 + 1/2 + 1/3 + 1/4 + 1/5 + 1/6 + 1/7 + 1/8,
+        ];
+        $this->assertEquals($expected, Harmonic::getSeries(8));
+    }
 }

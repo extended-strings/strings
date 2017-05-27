@@ -9,7 +9,7 @@ namespace ExtendedStrings\Strings;
  */
 class Math
 {
-    const PRECISION = 10;
+    const EPSILON = 0.0000000001;
 
     /**
      * Returns the greatest common divisor of two floats.
@@ -33,6 +33,6 @@ class Math
      */
     public static function isZero(float $x): bool
     {
-        return $x === 0 || abs($x) < pow(10, - self::PRECISION);
+        return $x === 0 || abs($x) < self::EPSILON;
     }
 }
