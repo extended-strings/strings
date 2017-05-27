@@ -75,6 +75,7 @@ class NoteTest extends TestCase
             ['A0', 440.0, 27.5],
             ['Ab4', 440.0, 415.3],
             ['A4', 440.0, 440.0], ['A4', 415.3, 415.3],
+            ['A4 +3c', 440.0, 440.76],
             ['D5', 440.0, 587.33],
             ['D#5', 440.0, 622.25], ['E5', 415.3, 622.25],
             ['E5', 440.0, 659.26],
@@ -93,20 +94,21 @@ class NoteTest extends TestCase
     public function testFromFrequency()
     {
         $expectations = [
-            ['A0', 440.0, 27.5],
-            ['G#4', 440.0, 415.3],
-            ['A4', 440.0, 440.0], ['A4', 415.3, 415.3],
-            ['D5', 440.0, 587.33],
-            ['D#5', 440.0, 622.25], ['E5', 415.3, 622.25],
-            ['E5', 440.0, 659.26],
-            ['A8', 440.0, 7040.0],
-            ['B8', 440.0, 7902.13],
+            [27.5, 440.0, 'A0'],
+            [415.3, 440.0, 'G#4'],
+            [440.0, 440.0, 'A4'], [415.3, 415.3, 'A4'],
+            [441.0, 440.0, 'A4 +3c'],
+            [587.33, 440.0, 'D5'],
+            [622.25, 440.0, 'D#5'], [622.25, 415.3, 'E5'],
+            [659.26, 440.0, 'E5'],
+            [7040.0, 440.0, 'A8'],
+            [7902.13, 440.0, 'B8'],
         ];
         $actual = array_map(function ($expectation) {
-            list(, $A4, $frequency) = $expectation;
+            list($frequency, $A4,) = $expectation;
             $note = Note::fromFrequency($frequency, $A4);
 
-            return [$note->__toString(), $A4, $frequency];
+            return [$frequency, $A4, $note->__toString()];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }
