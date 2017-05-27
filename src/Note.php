@@ -208,8 +208,8 @@ class Note
     public function __toString(): string
     {
         $output = sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
-        if (intval($this->difference) !== 0) {
-            $output .= sprintf(' %+dc', $this->difference);
+        if ((int) round($this->difference) !== 0) {
+            $output .= sprintf(' %+dc', round($this->difference));
         }
 
         return $output;
