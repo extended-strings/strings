@@ -214,4 +214,44 @@ class Note
 
         return $output;
     }
+
+    /**
+     * The simple note name (one of A-G).
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * The accidental (one of the Note::ACCIDENTAL_ constants).
+     *
+     * @return string
+     */
+    public function getAccidental(): string
+    {
+        return $this->accidental;
+    }
+
+    /**
+     * The octave (in scientific pitch notation).
+     *
+     * @return int
+     */
+    public function getOctave(): int
+    {
+        return $this->octave;
+    }
+
+    /**
+     * The difference between the note and its 12-TET form, in cents.
+     *
+     * @return float
+     */
+    public function getDifference(): float
+    {
+        return $this->difference;
+    }
 }

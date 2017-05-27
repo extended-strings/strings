@@ -11,24 +11,38 @@ class NoteTest extends TestCase
 {
     public function testFromCents()
     {
+        /**
+         * @var array $expectations
+         * An array of arrays each containing: cents, preferred accidentals,
+         * expected note (as string), note name, accidental, octave, and
+         * difference.
+         */
         $expectations = [
-            [1200, [], 'C5'],
-            [1200, ['-', '#'], 'C5'],
-            [1250, [], 'C+5'],
-            [1300, [], 'C#5'],
-            [1300, ['b'], 'Db5'],
-            [1400, [], 'D5'],
-            [1400, ['bb'], 'Ebb5'],
-            [1450, [], 'D+5'],
-            [1850, [], 'G-5'],
-            [-1, [], 'C4 -1c'],
-            [1785, [], 'F#5 -15c'],
+            [-1000, [], 'D3', 'D', Note::ACCIDENTAL_NATURAL, 3, .0],
+            [1200, [], 'C5', 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
+            [1200, ['-', '#'], 'C5', 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
+            [1250, [], 'C+5', 'C', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
+            [1300, [], 'C#5', 'C', Note::ACCIDENTAL_SHARP, 5, .0],
+            [1300, ['b'], 'Db5', 'D', Note::ACCIDENTAL_FLAT, 5, .0],
+            [1400, ['bb'], 'Ebb5', 'E', Note::ACCIDENTAL_DOUBLE_FLAT, 5, .0],
+            [1450, [], 'D+5', 'D', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
+            [1850, [], 'G-5', 'G', Note::ACCIDENTAL_QUARTER_FLAT, 5, .0],
+            [-1, [], 'C4 -1c', 'C', Note::ACCIDENTAL_NATURAL, 4, -1.0],
+            [1785, [], 'F#5 -15c', 'F', Note::ACCIDENTAL_SHARP, 5, -15.0],
         ];
         $actual = array_map(function ($expectation) {
             list($cents, $accidentalPreference,) = $expectation;
             $note = Note::fromCents($cents, $accidentalPreference);
 
-            return [$cents, $accidentalPreference, $note->__toString()];
+            return [
+                $cents,
+                $accidentalPreference,
+                $note->__toString(),
+                $note->getName(),
+                $note->getAccidental(),
+                $note->getOctave(),
+                $note->getDifference(),
+            ];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }
