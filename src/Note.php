@@ -97,7 +97,7 @@ class Note
         }
         $noteName = strtoupper($matches[0]);
         $name = substr($name, strlen($matches[0]));
-        if (preg_match('/^\-[0-9]$/i', $name)) {
+        if (preg_match('/^\-[0-9]+$/i', $name)) {
             throw new \InvalidArgumentException(sprintf(
                 'Ambiguous note: %s (does "-" mean a quarter-flat or a negative?)',
                 $original

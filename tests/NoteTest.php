@@ -53,7 +53,7 @@ class NoteTest extends TestCase
         $this->assertEquals(-50, Note::fromName('C- 4')->getCents());
         $this->assertEquals(-9600, Note::fromName('C -4')->getCents());
         $this->expectExceptionMessage('Ambiguous note');
-        Note::fromName('C-4');
+        Note::fromName('C-11');
     }
 
     public function testInvalidName()
