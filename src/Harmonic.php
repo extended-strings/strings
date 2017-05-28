@@ -18,6 +18,8 @@ class Harmonic
      */
     public function __construct(float $halfStop, float $baseStop = 1.0)
     {
+        VibratingString::validateStringLength($halfStop);
+        VibratingString::validateStringLength($baseStop);
         if ($halfStop > $baseStop) {
             throw new \InvalidArgumentException("The half-stop's string length cannot be longer than the base stop's.");
         }

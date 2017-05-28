@@ -112,7 +112,7 @@ class Note
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('Failed to find note name for cents: %d', $cents));
+        throw new \InvalidArgumentException(sprintf('Failed to find note name for cents: %d', $cents)); // @codeCoverageIgnore
     }
 
     /**

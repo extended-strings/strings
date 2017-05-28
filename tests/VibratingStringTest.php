@@ -18,7 +18,6 @@ class VibratingStringTest extends TestCase
          * expected frequency.
          */
         $expectations = [
-            [0, 1, 0],
             [1, 1, 440.0],
             [4, 5, 550.0],
             [2, 3, 660.0],
@@ -80,13 +79,12 @@ class VibratingStringTest extends TestCase
         $string = new VibratingString(131.0);
         /**
          * @var array $expectations
-         * An array of arrays each containing a numerator, denominator, and
-         * expected sounding frequency.
+         * An array of arrays each containing a string length (as numerator and
+         * denominator), and expected sounding frequency.
          *
          * @see http://www.phy.mtu.edu/~suits/overtone.html
          */
         $expectations = [
-            [0, 1, 0],
             [1, 1, 131],
             [1, 2, 262], [2, 4, 262],
             [1, 3, 393], [2, 3, 393], [2, 6, 393],
@@ -121,5 +119,15 @@ class VibratingStringTest extends TestCase
             return [$frequency, $string->getStringLength($frequency)];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
+    }
+
+    public function testInvalidStringLength()
+    {
+        $this->expectExceptionMessage('Invalid string length: -5');
+        VibratingString::getHarmonicNumber(-5.0);
+        $this->expectExceptionMessage('Invalid string length: 0');
+        VibratingString::getHarmonicNumber(0.0);
+        $this->expectExceptionMessage('Invalid string length: 1.1');
+        VibratingString::getHarmonicNumber(1.1);
     }
 }

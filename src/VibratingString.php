@@ -28,9 +28,7 @@ class VibratingString
      */
     public function getStoppedFrequency(float $stringLength = 1.0): float
     {
-        if (Math::isZero($stringLength)) {
-            return 0;
-        }
+        self::validateStringLength($stringLength);
         $centsOverString = Cent::frequenciesToCents($stringLength, 1);
 
         return Cent::centsToFrequency($centsOverString, $this->frequency);
@@ -48,9 +46,9 @@ class VibratingString
      */
     public function getHarmonicSoundingFrequency(float $stringLength = 1.0): float
     {
-        return Math::isZero($stringLength)
-            ? 0
-            : $this->frequency * self::getHarmonicNumber($stringLength);
+        self::validateStringLength($stringLength);
+
+        return $this->frequency * self::getHarmonicNumber($stringLength);
     }
 
     /**
@@ -87,12 +85,28 @@ class VibratingString
      */
     public static function getHarmonicNumber(float $stringLength): int
     {
+        self::validateStringLength($stringLength);
         $number = intval(1 / Math::gcd(1, $stringLength));
         if ($number > 100) {
             throw new \InvalidArgumentException(sprintf('Invalid string length for a harmonic: %f', $stringLength));
         }
 
         return $number;
+    }
+
+    /**
+     * Validate a string length.
+     *
+     * @param float $length
+     *
+     * @throws \InvalidArgumentException If the string length is invalid.
+     */
+    public static function validateStringLength(float $length): void
+    {
+        if ($length < 0 || Math::isZero($length) || $length > 1) {
+            throw new \InvalidArgumentException(sprintf('Invalid string length: %f', $length));
+        }
+        // @todo validate against string width
     }
 
     /**
