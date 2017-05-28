@@ -28,7 +28,7 @@ class VibratingString
      */
     public function getStoppedFrequency(float $stringLength = 1.0): float
     {
-        self::validateStringLength($stringLength);
+        $this->validateStringLength($stringLength);
         $centsOverString = Cent::frequenciesToCents($stringLength, 1);
 
         return Cent::centsToFrequency($centsOverString, $this->frequency);

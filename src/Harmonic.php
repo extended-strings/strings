@@ -8,45 +8,52 @@ class Harmonic
 {
     private $halfStop;
     private $baseStop;
+    private $vibratingString;
+    private $soundingFrequency;
 
     /**
      * Harmonic constructor.
      *
-     * @param float $halfStop The string length of the harmonic-pressure stop.
-     * @param float $baseStop The string length of the base stop (defaults to
-     *                        1.0, the open string).
+     * @param float $halfStop
+     *     The string length of the harmonic-pressure stop.
+     * @param float $baseStop
+     *     The string length of the base stop (defaults to 1.0, the open string).
+     * @param VibratingString $vibratingString
+     *     The string.
      */
-    public function __construct(float $halfStop, float $baseStop = 1.0)
+    public function __construct(float $halfStop, float $baseStop = 1.0, VibratingString $vibratingString)
     {
-        VibratingString::validateStringLength($halfStop);
-        VibratingString::validateStringLength($baseStop);
+        $vibratingString->validateStringLength($halfStop);
+        $vibratingString->validateStringLength($baseStop);
         if ($halfStop > $baseStop) {
             throw new \InvalidArgumentException("The half-stop's string length cannot be longer than the base stop's.");
         }
 
         $this->baseStop = $baseStop;
         $this->halfStop = $halfStop;
+        $this->vibratingString = $vibratingString;
     }
 
     /**
-     * Returns the sounding frequency of the harmonic, on a given string.
-     *
-     * @param \ExtendedStrings\Strings\VibratingString $string
+     * Returns the sounding frequency of the harmonic (in Hz).
      *
      * @return float
      */
-    public function getSoundingFrequency(VibratingString $string): float
+    public function getSoundingFrequency(): float
     {
-        // Transpose the half-stop onto the new string length, which was formed
-        // by the stop.
-        $pseudoString = new VibratingString($string->getStoppedFrequency($this->baseStop));
-        $pseudoHalfStop = $this->halfStop / $this->baseStop;
+        if (!isset($this->soundingFrequency)) {
+            // Transpose the half-stop onto the new string length, which was formed
+            // by the stop.
+            $pseudoString = new VibratingString($this->vibratingString->getStoppedFrequency($this->baseStop));
+            $pseudoHalfStop = $this->halfStop / $this->baseStop;
+            $this->soundingFrequency = $pseudoString->getHarmonicSoundingFrequency($pseudoHalfStop);
+        }
 
-        return $pseudoString->getHarmonicSoundingFrequency($pseudoHalfStop);
+        return $this->soundingFrequency;
     }
 
     /**
-     * Returns the string lengths that produce the given harmonic number.
+     * Returns the string lengths that produce a given harmonic number.
      *
      * @param int  $number    The harmonic number.
      * @param bool $exclusive When enabled, equivalent lengths will only be
@@ -84,5 +91,55 @@ class Harmonic
         }
 
         return $series;
+    }
+
+    /**
+     * Returns the harmonic-pressure stop, as a string length.
+     *
+     * @return float
+     */
+    public function getHalfStop(): float
+    {
+        return $this->halfStop;
+    }
+
+    /**
+     * Returns the base stop, as a string length.
+     *
+     * @return float
+     */
+    public function getBaseStop(): float
+    {
+        return $this->baseStop;
+    }
+
+    /**
+     * Returns the string.
+     *
+     * @return VibratingString
+     */
+    public function getString(): VibratingString
+    {
+        return $this->vibratingString;
+    }
+
+    /**
+     * Returns whether this is a natural harmonic.
+     *
+     * @return bool
+     */
+    public function isNatural(): bool
+    {
+        return Math::isZero(1 - $this->baseStop);
+    }
+
+    /**
+     * Returns whether this is an open string.
+     *
+     * @return bool
+     */
+    public function isOpenString(): bool
+    {
+        return Math::isZero(1 - $this->baseStop) && Math::isZero(1 - $this->halfStop);
     }
 }

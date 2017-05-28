@@ -67,9 +67,9 @@ class HarmonicTest extends TestCase
 
         $actual = array_map(function ($expectation) use ($string) {
             list($stop, $halfStop,) = $expectation;
-            $harmonic = new Harmonic($halfStop, $stop);
+            $harmonic = new Harmonic($halfStop, $stop, $string);
 
-            return [$stop, $halfStop, $harmonic->getSoundingFrequency($string)];
+            return [$stop, $halfStop, $harmonic->getSoundingFrequency()];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }
@@ -77,7 +77,7 @@ class HarmonicTest extends TestCase
     public function testInvalidHarmonic()
     {
         $this->expectException(\InvalidArgumentException::class);
-        new Harmonic(.2, .1);
+        new Harmonic(.2, .1, new VibratingString(440.0));
     }
 
     public function testSeries()
