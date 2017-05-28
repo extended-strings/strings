@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
@@ -10,8 +10,11 @@ class Harmonic
     private $baseStop;
 
     /**
-     * @param float $halfStop
-     * @param float $baseStop
+     * Harmonic constructor.
+     *
+     * @param float $halfStop The string length of the harmonic-pressure stop.
+     * @param float $baseStop The string length of the base stop (defaults to
+     *                        1.0, the open string).
      */
     public function __construct(float $halfStop, float $baseStop = 1.0)
     {
@@ -24,11 +27,13 @@ class Harmonic
     }
 
     /**
+     * Returns the sounding frequency of the harmonic, on a given string.
+     *
      * @param \ExtendedStrings\Strings\VibratingString $string
      *
      * @return float
      */
-    public function getSoundingPitch(VibratingString $string): float
+    public function getSoundingFrequency(VibratingString $string): float
     {
         // Transpose the half-stop onto the new string length, which was formed
         // by the stop.
@@ -39,8 +44,13 @@ class Harmonic
     }
 
     /**
-     * @param int  $number
-     * @param bool $exclusive
+     * Returns the string lengths that produce the given harmonic number.
+     *
+     * @param int  $number    The harmonic number.
+     * @param bool $exclusive When enabled, equivalent lengths will only be
+     *                        returned for the lowest harmonic number, e.g. the
+     *                        string length 0.5 will only be returned for
+     *                        harmonic 2 (not for harmonics 4, 6, 8, etc.).
      *
      * @return float[]
      */
@@ -57,6 +67,8 @@ class Harmonic
     }
 
     /**
+     * Returns the harmonic series.
+     *
      * @param int $limit
      *
      * @return float[]

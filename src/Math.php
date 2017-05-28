@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
-/**
- * A class containing functions useful for floating-point calculations.
- */
 class Math
 {
     const EPSILON = 0.0000000001;

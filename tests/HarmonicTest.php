@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings\Tests;
 
@@ -69,7 +69,7 @@ class HarmonicTest extends TestCase
             list($stop, $halfStop,) = $expectation;
             $harmonic = new Harmonic($halfStop, $stop);
 
-            return [$stop, $halfStop, $harmonic->getSoundingPitch($string)];
+            return [$stop, $halfStop, $harmonic->getSoundingFrequency($string)];
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }

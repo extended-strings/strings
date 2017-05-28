@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
@@ -9,7 +9,9 @@ class VibratingString
     private $frequency;
 
     /**
-     * @param float $frequency
+     * VibratingString constructor.
+     *
+     * @param float $frequency The open string frequency (in Hz).
      */
     public function __construct(float $frequency)
     {
@@ -17,9 +19,12 @@ class VibratingString
     }
 
     /**
-     * @param float $stringLength
+     * Calculate the frequency for a stop.
      *
-     * @return float
+     * @param float $stringLength The length of the vibrating part of the
+     *                            string, as a fraction of the whole string.
+     *
+     * @return float A frequency (in Hz).
      */
     public function getStoppedFrequency(float $stringLength = 1.0): float
     {
@@ -32,9 +37,14 @@ class VibratingString
     }
 
     /**
-     * @param float $stringLength
+     * Find the sounding frequency of a harmonic-pressure stop on this string.
      *
-     * @return float
+     * @param float $stringLength The string length, as a fraction, between the
+     *                            open string and the stop (either side: both
+     *                            .2 and .8 would produce the same result).
+     *
+     * @return float The sounding frequency of a harmonic-pressure stop at the
+     *               given string length.
      */
     public function getHarmonicSoundingFrequency(float $stringLength = 1.0): float
     {
@@ -44,9 +54,14 @@ class VibratingString
     }
 
     /**
-     * @param float $frequency
+     * Calculate the length of this string needed to produce a given frequency.
+     *
+     * @param float $frequency The frequency for which to calculate the string
+     *                         length.
      *
      * @return float
+     *   The length of the vibrating part of the string, as a fraction of the
+     *   whole string's length.
      */
     public function getStringLength(float $frequency): float
     {
@@ -59,23 +74,16 @@ class VibratingString
     }
 
     /**
-     * @param float $cents
-     *   The number of cents between the open string and the stop.
+     * Convert a string length to a harmonic number.
      *
-     * @return float
-     *   The length of the remaining vibrating string.
-     */
-    private function centsToStringLength(float $cents): float
-    {
-        return 1 / pow(2, $cents / 1200);
-    }
-
-    /**
-     * @param float $stringLength
+     * @param float $stringLength The string length between the open string and
+     *                            the harmonic-pressure stop (either side), as a
+     *                            fraction.
      *
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException If the stop is not a sounding natural
+     *                                   harmonic.
      *
-     * @return int
+     * @return int The harmonic number.
      */
     public static function getHarmonicNumber(float $stringLength): int
     {
@@ -85,5 +93,19 @@ class VibratingString
         }
 
         return $number;
+    }
+
+    /**
+     * Convert a number of cents to a string length.
+     *
+     * @param float $cents The number of cents between the open string and the
+     *                     stopped pitch.
+     *
+     * @return float The length of the vibrating string, as a fraction of the
+     * whole string's length.
+     */
+    private function centsToStringLength(float $cents): float
+    {
+        return 1 / pow(2, $cents / 1200);
     }
 }

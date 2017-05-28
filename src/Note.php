@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
@@ -68,7 +68,11 @@ class Note
     private $difference;
 
     /**
-     * Internal constructor: use one of the factory methods to create a Note.
+     * Internal constructor. Use one of the factory methods to create a Note.
+     *
+     * @see Note::fromCents()
+     * @see Note::fromFrequency()
+     * @see Note::fromName()
      *
      * @param string $name         The note name (A-G).
      * @param string $accidental   The accidental (one of the Note::ACCIDENTAL_
@@ -85,7 +89,34 @@ class Note
     }
 
     /**
-     * Factory to create a Note from a note name.
+     * Instantiate a Note from a number of cents.
+     *
+     * @param float    $cents                A number of cents above C4.
+     * @param string[] $preferredAccidentals A list of accidentals in order of
+     *                                       preference. This will be merged
+     *                                       with a default list.
+     *
+     * @return self
+     */
+    public static function fromCents(float $cents, array $preferredAccidentals = []): self
+    {
+        $rounded = (int) round($cents / 50) * 50;
+        $difference = $cents - $rounded;
+        $octave = (int) floor($rounded / 1200) + 4;
+        $centsWithoutOctave = $rounded - (($octave - 4) * 1200);
+        $preferredAccidentals = array_merge($preferredAccidentals, self::$preferredAccidentals);
+        foreach ($preferredAccidentals as $accidental) {
+            $accidentalCents = self::$accidentalCents[$accidental];
+            if (($name = array_search($centsWithoutOctave - $accidentalCents, self::$names, true)) !== false) {
+                return new self((string) $name, $accidental, $octave, $difference);
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Failed to find note name for cents: %d', $cents));
+    }
+
+    /**
+     * Instantiate a Note from a note name.
      *
      * @param string $name A note name with an accidental and an octave in
      *                     scientific pitch notation, e.g. C#4 or Eb5.
@@ -123,30 +154,99 @@ class Note
     }
 
     /**
-     * Factory to create a Note from a number of cents.
+     * Instantiate a Note from a frequency.
      *
-     * @param float      $cents              A number of cents above C4.
-     * @param string[] $preferredAccidentals A list of accidentals in order of
-     *                                       preference. This will be merged
-     *                                       with a default list.
+     * @param float $frequency            The frequency (in Hz).
+     * @param float $A4                   The frequency of A4, for reference.
+     * @param array $preferredAccidentals Some preferred accidentals.
      *
      * @return self
      */
-    public static function fromCents(float $cents, array $preferredAccidentals = []): self
+    public static function fromFrequency($frequency, float $A4 = 440.0, array $preferredAccidentals = []): self
     {
-        $rounded = (int) round($cents / 50) * 50;
-        $difference = $cents - $rounded;
-        $octave = (int) floor($rounded / 1200) + 4;
-        $centsWithoutOctave = $rounded - (($octave - 4) * 1200);
-        $preferredAccidentals = array_merge($preferredAccidentals, self::$preferredAccidentals);
-        foreach ($preferredAccidentals as $accidental) {
-            $accidentalCents = self::$accidentalCents[$accidental];
-            if (($name = array_search($centsWithoutOctave - $accidentalCents, self::$names, true)) !== false) {
-                return new self((string) $name, $accidental, $octave, $difference);
-            }
+        $cents = Cent::frequenciesToCents($A4, $frequency) + 900;
+
+        return self::fromCents($cents, $preferredAccidentals);
+    }
+
+    /**
+     * Returns the note as a number of cents above C4.
+     *
+     * @return float
+     */
+    public function getCents(): float
+    {
+        return self::$names[$this->name]
+            + self::$accidentalCents[$this->accidental]
+            + (($this->octave - 4) * 1200)
+            + $this->difference;
+    }
+
+    /**
+     * Returns the note as a frequency.
+     *
+     * @param float $A4 The frequency of A4 (in Hz), for reference.
+     *
+     * @return float
+     */
+    public function getFrequency(float $A4 = 440.0): float
+    {
+        return Cent::centsToFrequency($this->getCents() - 900, $A4);
+    }
+
+    /**
+     * Returns a string representation of the note.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        $output = sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
+        if ((int) round($this->difference) !== 0) {
+            $output .= sprintf(' %+dc', round($this->difference));
         }
 
-        throw new \InvalidArgumentException(sprintf('Failed to find note name for cents: %d', $cents));
+        return $output;
+    }
+
+    /**
+     * Returns the simple note name (one of A-G).
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Returns the accidental (one of the Note::ACCIDENTAL_ constants).
+     *
+     * @return string
+     */
+    public function getAccidental(): string
+    {
+        return $this->accidental;
+    }
+
+    /**
+     * Returns the octave (in scientific pitch notation).
+     *
+     * @return int
+     */
+    public function getOctave(): int
+    {
+        return $this->octave;
+    }
+
+    /**
+     * Returns the difference between the note and its 12-TET form, in cents.
+     *
+     * @return float
+     */
+    public function getDifference(): float
+    {
+        return $this->difference;
     }
 
     /**
@@ -165,93 +265,5 @@ class Note
         }
 
         throw new \InvalidArgumentException(sprintf('Invalid accidental: %s', $accidental));
-    }
-
-    /**
-     * @return float The number of cents above C4.
-     */
-    public function getCents(): float
-    {
-        return self::$names[$this->name]
-            + self::$accidentalCents[$this->accidental]
-            + (($this->octave - 4) * 1200)
-            + $this->difference;
-    }
-
-    /**
-     * @param float $A4 The frequency of A4, for reference.
-     *
-     * @return float The frequency of the note.
-     */
-    public function getFrequency(float $A4 = 440.0): float
-    {
-        return Cent::centsToFrequency($this->getCents() - 900, $A4);
-    }
-
-    /**
-     * @param float $frequency            The frequency.
-     * @param float $A4                   The frequency of A4, for reference.
-     * @param array $preferredAccidentals Some preferred accidentals.
-     *
-     * @return self
-     */
-    public static function fromFrequency($frequency, float $A4 = 440.0, array $preferredAccidentals = []): self
-    {
-        $cents = Cent::frequenciesToCents($A4, $frequency) + 900;
-
-        return self::fromCents($cents, $preferredAccidentals);
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        $output = sprintf('%s%s%d', $this->name, $this->accidental, $this->octave);
-        if ((int) round($this->difference) !== 0) {
-            $output .= sprintf(' %+dc', round($this->difference));
-        }
-
-        return $output;
-    }
-
-    /**
-     * The simple note name (one of A-G).
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * The accidental (one of the Note::ACCIDENTAL_ constants).
-     *
-     * @return string
-     */
-    public function getAccidental(): string
-    {
-        return $this->accidental;
-    }
-
-    /**
-     * The octave (in scientific pitch notation).
-     *
-     * @return int
-     */
-    public function getOctave(): int
-    {
-        return $this->octave;
-    }
-
-    /**
-     * The difference between the note and its 12-TET form, in cents.
-     *
-     * @return float
-     */
-    public function getDifference(): float
-    {
-        return $this->difference;
     }
 }

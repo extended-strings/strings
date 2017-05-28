@@ -1,17 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
 class Cent
 {
     /**
-     * @param float $lower
-     * @param float $upper
+     * Returns the number of cents between two frequencies.
+     *
+     * @param float $lower The lower frequency (in Hz).
+     * @param float $upper The upper frequency (in Hz).
      *
      * @return float
-     *   The number of cents between the two frequencies.
      */
     public static function frequenciesToCents(float $lower, float $upper): float
     {
@@ -19,10 +20,12 @@ class Cent
     }
 
     /**
-     * @param float $cents
-     * @param float $base
+     * Calculates the frequency of a number of cents above a base frequency.
      *
-     * @return float
+     * @param float $cents A number of cents.
+     * @param float $base  The base frequency (in Hz).
+     *
+     * @return float The calculated frequency (in Hz).
      */
     public static function centsToFrequency(float $cents, float $base): float
     {
