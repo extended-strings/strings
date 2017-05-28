@@ -46,13 +46,9 @@ class Harmonic
      */
     public static function getStringLengthsFromNumber(int $number, bool $exclusive = false): array
     {
-        if ($number === 1) {
-            return [1.0];
-        }
-
         $harmonics = [];
-        for ($numerator = 1; $numerator < $number; $numerator++) {
-            if (!$exclusive || (int) Math::gcd($numerator, $number) === 1) {
+        for ($numerator = 1; $numerator <= $number; $numerator++) {
+            if (!$exclusive || $numerator === 1 || (int) Math::gcd($numerator, $number) === 1) {
                 $harmonics[] = $numerator / $number;
             }
         }
