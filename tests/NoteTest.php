@@ -18,17 +18,17 @@ class NoteTest extends TestCase
          * difference.
          */
         $expectations = [
-            [-1000, [], 'D3', 'D', Note::ACCIDENTAL_NATURAL, 3, .0],
-            [1200, [], 'C5', 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
-            [1200, ['-', '#'], 'C5', 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
-            [1250, [], 'C+5', 'C', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
-            [1300, [], 'C#5', 'C', Note::ACCIDENTAL_SHARP, 5, .0],
-            [1300, ['b'], 'Db5', 'D', Note::ACCIDENTAL_FLAT, 5, .0],
-            [1400, ['bb'], 'Ebb5', 'E', Note::ACCIDENTAL_DOUBLE_FLAT, 5, .0],
-            [1450, [], 'D+5', 'D', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
-            [1850, [], 'G-5', 'G', Note::ACCIDENTAL_QUARTER_FLAT, 5, .0],
-            [-1, [], 'C4 -1c', 'C', Note::ACCIDENTAL_NATURAL, 4, -1.0],
-            [1785, [], 'F#5 -15c', 'F', Note::ACCIDENTAL_SHARP, 5, -15.0],
+            [-1000, [], 'D', Note::ACCIDENTAL_NATURAL, 3, .0],
+            [1200, [], 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
+            [1200, [Note::ACCIDENTAL_QUARTER_FLAT, Note::ACCIDENTAL_SHARP], 'C', Note::ACCIDENTAL_NATURAL, 5, .0],
+            [1250, [], 'C', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
+            [1300, [], 'C', Note::ACCIDENTAL_SHARP, 5, .0],
+            [1300, [Note::ACCIDENTAL_FLAT], 'D', Note::ACCIDENTAL_FLAT, 5, .0],
+            [1400, [Note::ACCIDENTAL_DOUBLE_FLAT], 'E', Note::ACCIDENTAL_DOUBLE_FLAT, 5, .0],
+            [1450, [], 'D', Note::ACCIDENTAL_QUARTER_SHARP, 5, .0],
+            [1850, [], 'G', Note::ACCIDENTAL_QUARTER_FLAT, 5, .0],
+            [-1, [], 'C', Note::ACCIDENTAL_NATURAL, 4, -1.0],
+            [1785, [], 'F', Note::ACCIDENTAL_SHARP, 5, -15.0],
         ];
         $actual = array_map(function ($expectation) {
             list($cents, $accidentalPreference,) = $expectation;
@@ -37,7 +37,6 @@ class NoteTest extends TestCase
             return [
                 $cents,
                 $accidentalPreference,
-                $note->__toString(),
                 $note->getName(),
                 $note->getAccidental(),
                 $note->getOctave(),
@@ -95,11 +94,11 @@ class NoteTest extends TestCase
     {
         $expectations = [
             [27.5, 440.0, 'A0'],
-            [415.3, 440.0, 'G#4'],
+            [415.3, 440.0, 'G♯4'],
             [440.0, 440.0, 'A4'], [415.3, 415.3, 'A4'],
             [441.0, 440.0, 'A4 +4c'],
             [587.33, 440.0, 'D5'],
-            [622.25, 440.0, 'D#5'], [622.25, 415.3, 'E5'],
+            [622.25, 440.0, 'D♯5'], [622.25, 415.3, 'E5'],
             [659.26, 440.0, 'E5'],
             [7040.0, 440.0, 'A8'],
             [7902.13, 440.0, 'B8'],
