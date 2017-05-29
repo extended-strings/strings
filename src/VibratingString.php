@@ -101,7 +101,7 @@ class VibratingString
      *
      * @throws \InvalidArgumentException If the string length is invalid.
      */
-    public static function validateStringLength(float $length): void
+    public static function validateStringLength(float $length)
     {
         if ($length < 0 || Math::isZero($length) || $length > 1) {
             throw new \InvalidArgumentException(sprintf('Invalid string length: %f', $length));
