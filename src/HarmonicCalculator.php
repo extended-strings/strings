@@ -9,20 +9,38 @@ use ExtendedStrings\Strings\Instrument\InstrumentInterface;
 class HarmonicCalculator
 {
     /**
-     * @param \ExtendedStrings\Strings\Note                           $soundingNote
-     * @param \ExtendedStrings\Strings\Instrument\InstrumentInterface $instrument
-     * @param float                                                   $tolerance
+     * Returns a list of possible harmonics that produce a given sounding note.
+     *
+     * @param Note                $soundingNote The desired sounding note of
+     *                                          the harmonic.
+     * @param InstrumentInterface $instrument   The instrument.
+     * @param float               $tolerance    The maximum deviation (cents)
+     *                                          between the desired sounding
+     *                                          note and a natural harmonic.
+     * @param float               $maxDistance  The maximum distance (mm)
+     *                                          between the stops.
      *
      * @return Harmonic[]
      */
-    public function getHarmonicsForSoundingNote(Note $soundingNote, InstrumentInterface $instrument, float $tolerance = 50.0): array
+    public function getHarmonicsForSoundingNote(Note $soundingNote, InstrumentInterface $instrument, float $tolerance = 50.0, float $maxDistance = 120.0): array
     {
         $harmonics = [];
         foreach ($instrument->getStringFrequencies() as $stringFrequency) {
             $string = new VibratingString($stringFrequency);
-            $harmonics += $this->findNaturalHarmonics($soundingNote, $string, $tolerance)
-                + $this->findArtificialHarmonics($soundingNote, $string);
+            $harmonics = array_merge(
+                $harmonics,
+                $this->findNaturalHarmonics($soundingNote, $string, $tolerance),
+                $this->findArtificialHarmonics($soundingNote, $string)
+            );
         }
+
+        $harmonics = array_filter($harmonics, function (Harmonic $harmonic) use ($instrument, $maxDistance) {
+            $distance = $harmonic->isNatural()
+                ? 0
+                : ($harmonic->getBaseStop() - $harmonic->getHalfStop()) * $instrument->getStringLength();
+
+            return $distance < $maxDistance;
+        });
 
         return $harmonics;
     }
@@ -57,7 +75,7 @@ class HarmonicCalculator
             // frequency and the desired sounding note.
             $difference = abs(Cent::frequencyToCents($candidateFrequency) - $soundingCents);
 
-            if ($difference < $tolerance) {
+            if ($difference <= $tolerance) {
                 $stringLengths = Harmonic::getStringLengthsFromNumber($number, true);
                 foreach ($stringLengths as $stringLength) {
                     $harmonics[] = new Harmonic($stringLength, 1.0, $string);
