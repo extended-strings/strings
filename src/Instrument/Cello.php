@@ -17,8 +17,8 @@ class Cello extends InstrumentBase implements InstrumentInterface
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultStopLength(): float
+    protected function getDefaultStringLength(): float
     {
-        return 400;
+        return 690;
     }
 }

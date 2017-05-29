@@ -14,9 +14,9 @@ interface InstrumentInterface
     public function getStringFrequencies(): array;
 
     /**
-     * Returns the stop length of the instrument (in mm).
+     * Returns the vibrating string length of the instrument (in mm).
      *
      * @return float
      */
-    public function getStopLength(): float;
+    public function getStringLength(): float;
 }

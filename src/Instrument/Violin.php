@@ -17,8 +17,8 @@ class Violin extends InstrumentBase implements InstrumentInterface
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultStopLength(): float
+    protected function getDefaultStringLength(): float
     {
-        return 196.5;
+        return 325;
     }
 }

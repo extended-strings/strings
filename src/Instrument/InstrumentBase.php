@@ -11,27 +11,27 @@ abstract class InstrumentBase implements InstrumentInterface
     protected $defaultStopLength;
 
     private $stringFrequencies = [];
-    private $stopLength;
+    private $stringLength;
 
     /**
      * Violin constructor.
      *
      * @param array|null $stringFrequencies
-     * @param float      $stopLength
+     * @param float      $stringLength
      */
-    public function __construct(array $stringFrequencies = null, float $stopLength = null)
+    public function __construct(array $stringFrequencies = null, float $stringLength = null)
     {
         if (null === $stringFrequencies) {
             $stringFrequencies = array_map(function ($name) {
                 return Note::fromName($name)->getFrequency();
             }, $this->getDefaultNames());
         }
-        if (null === $stopLength) {
-            $stopLength = $this->getDefaultStopLength();
+        if (null === $stringLength) {
+            $stringLength = $this->getDefaultStringLength();
         }
 
         $this->stringFrequencies = $stringFrequencies;
-        $this->stopLength = $stopLength;
+        $this->stringLength = $stringLength;
     }
 
     /**
@@ -41,9 +41,9 @@ abstract class InstrumentBase implements InstrumentInterface
     abstract protected function getDefaultNames(): array;
 
     /**
-     * @return float The default stop length of the instrument (mm).
+     * @return float The default vibrating string length of the instrument (mm).
      */
-    abstract protected function getDefaultStopLength(): float;
+    abstract protected function getDefaultStringLength(): float;
 
     /**
      * {@inheritdoc}
@@ -56,8 +56,8 @@ abstract class InstrumentBase implements InstrumentInterface
     /**
      * {@inheritdoc}
      */
-    public function getStopLength(): float
+    public function getStringLength(): float
     {
-        return $this->stopLength;
+        return $this->stringLength;
     }
 }

@@ -4,14 +4,14 @@ declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings\Instrument;
 
-class DoubleBass extends InstrumentBase implements InstrumentInterface
+class Guitar extends InstrumentBase implements InstrumentInterface
 {
     /**
      * {@inheritdoc}
      */
     protected function getDefaultNames(): array
     {
-        return ['E1', 'A1', 'D2', 'G2'];
+        return ['E4', 'B3', 'G3', 'D3', 'A2', 'E2'];
     }
 
     /**
@@ -19,6 +19,6 @@ class DoubleBass extends InstrumentBase implements InstrumentInterface
      */
     protected function getDefaultStringLength(): float
     {
-        return 1140;
+        return 650;
     }
 }

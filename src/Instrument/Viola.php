@@ -17,8 +17,8 @@ class Viola extends InstrumentBase implements InstrumentInterface
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultStopLength(): float
+    protected function getDefaultStringLength(): float
     {
-        return 222;
+        return 410;
     }
 }
