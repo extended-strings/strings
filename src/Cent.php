@@ -20,6 +20,19 @@ class Cent
     }
 
     /**
+     * Converts a frequency to a number of cents above C4.
+     *
+     * @param float $frequency The frequency to convert.
+     * @param float $A4        The reference frequency of A4 (defaults to 440).
+     *
+     * @return float
+     */
+    public static function frequencyToCents(float $frequency, float $A4 = 440.0): float
+    {
+        return self::frequenciesToCents($A4, $frequency) + 900;
+    }
+
+    /**
      * Calculates the frequency of a number of cents above a base frequency.
      *
      * @param float $cents A number of cents.

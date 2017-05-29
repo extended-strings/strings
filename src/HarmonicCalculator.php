@@ -50,12 +50,12 @@ class HarmonicCalculator
         $harmonics = [];
         $soundingCents = $soundingNote->getCents();
         foreach (range(1, 8) as $number) {
-            // Convert harmonic number to (possible sounding) frequency.
+            // Convert harmonic number to the sounding frequency.
             $candidateFrequency = $string->getHarmonicSoundingFrequency(1 / $number);
 
-            // Convert (possible sounding) frequency to cents above C4, for comparison.
-            $candidate = Note::fromFrequency($candidateFrequency, 440.0, [$soundingNote->getAccidental()]);
-            $difference = abs($candidate->getCents() - $soundingCents);
+            // Calculate the difference in cents between the natural harmonic
+            // frequency and the desired sounding note.
+            $difference = abs(Cent::frequencyToCents($candidateFrequency) - $soundingCents);
 
             if ($difference < $tolerance) {
                 $stringLengths = Harmonic::getStringLengthsFromNumber($number, true);

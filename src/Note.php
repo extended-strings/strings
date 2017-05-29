@@ -164,9 +164,7 @@ class Note
      */
     public static function fromFrequency($frequency, float $A4 = 440.0, array $preferredAccidentals = []): self
     {
-        $cents = Cent::frequenciesToCents($A4, $frequency) + 900;
-
-        return self::fromCents($cents, $preferredAccidentals);
+        return self::fromCents(Cent::frequencyToCents($frequency, $A4), $preferredAccidentals);
     }
 
     /**
