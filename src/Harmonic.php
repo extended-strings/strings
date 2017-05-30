@@ -23,7 +23,7 @@ class Harmonic
      */
     public function __construct(Stop $halfStop, Stop $baseStop = null, VibratingStringInterface $string)
     {
-        $baseStop = $baseStop ?: new Stop(1.0, $string);
+        $baseStop = $baseStop ?: new Stop(1.0);
         if ($halfStop->getStringLength() > $baseStop->getStringLength()) {
             throw new \InvalidArgumentException("The half-stop cannot be lower than the base stop.");
         }
