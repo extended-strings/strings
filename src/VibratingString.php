@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace ExtendedStrings\Strings;
 
-class VibratingString
+class VibratingString implements VibratingStringInterface
 {
     private $frequency;
 
@@ -19,107 +19,12 @@ class VibratingString
     }
 
     /**
-     * Calculate the frequency for a stop.
-     *
-     * @param float $stringLength The length of the vibrating part of the
-     *                            string, as a fraction of the whole string.
-     *
-     * @return float A frequency (in Hz).
-     */
-    public function getStoppedFrequency(float $stringLength = 1.0): float
-    {
-        $this->validateStringLength($stringLength);
-        $centsOverString = Cent::frequenciesToCents($stringLength, 1);
-
-        return Cent::centsToFrequency($centsOverString, $this->frequency);
-    }
-
-    /**
-     * Find the sounding frequency of a harmonic-pressure stop on this string.
-     *
-     * @param float $stringLength The string length, as a fraction, between the
-     *                            open string and the stop (either side: both
-     *                            .2 and .8 would produce the same result).
-     *
-     * @return float The sounding frequency of a harmonic-pressure stop at the
-     *               given string length.
-     */
-    public function getHarmonicSoundingFrequency(float $stringLength = 1.0): float
-    {
-        self::validateStringLength($stringLength);
-
-        return $this->frequency * self::getHarmonicNumber($stringLength);
-    }
-
-    /**
-     * Calculate the length of this string needed to produce a given frequency.
-     *
-     * @param float $frequency The frequency for which to calculate the string
-     *                         length.
+     * Returns the frequency of the open string (in Hz).
      *
      * @return float
-     *   The length of the vibrating part of the string, as a fraction of the
-     *   whole string's length.
      */
-    public function getStringLength(float $frequency): float
+    public function getFrequency(): float
     {
-        if (Math::isZero($frequency)) {
-            return 0;
-        }
-        $centsOverString = Cent::frequenciesToCents($this->frequency, $frequency);
-
-        return $this->centsToStringLength($centsOverString);
-    }
-
-    /**
-     * Convert a string length to a harmonic number.
-     *
-     * @param float $stringLength The string length between the open string and
-     *                            the harmonic-pressure stop (either side), as a
-     *                            fraction.
-     *
-     * @throws \InvalidArgumentException If the stop is not a sounding natural
-     *                                   harmonic.
-     *
-     * @return int The harmonic number.
-     */
-    public static function getHarmonicNumber(float $stringLength): int
-    {
-        self::validateStringLength($stringLength);
-        $number = intval(1 / Math::gcd(1, $stringLength));
-        if ($number > 100) {
-            throw new \InvalidArgumentException(sprintf('Invalid string length for a harmonic: %f', $stringLength));
-        }
-
-        return $number;
-    }
-
-    /**
-     * Validate a string length.
-     *
-     * @param float $length
-     *
-     * @throws \InvalidArgumentException If the string length is invalid.
-     */
-    public static function validateStringLength(float $length)
-    {
-        if ($length < 0 || Math::isZero($length) || $length > 1) {
-            throw new \InvalidArgumentException(sprintf('Invalid string length: %f', $length));
-        }
-        // @todo validate against string width
-    }
-
-    /**
-     * Convert a number of cents to a string length.
-     *
-     * @param float $cents The number of cents between the open string and the
-     *                     stopped pitch.
-     *
-     * @return float The length of the vibrating string, as a fraction of the
-     * whole string's length.
-     */
-    private function centsToStringLength(float $cents): float
-    {
-        return 1 / pow(2, $cents / 1200);
+        return $this->frequency;
     }
 }

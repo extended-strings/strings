@@ -5,15 +5,15 @@ declare(strict_types = 1);
 namespace ExtendedStrings\Strings\Tests;
 
 use ExtendedStrings\Strings\HarmonicCalculator;
-use ExtendedStrings\Strings\Instrument\Violin;
+use ExtendedStrings\Strings\Instrument;
 use ExtendedStrings\Strings\Note;
 use PHPUnit\Framework\TestCase;
 
 class HarmonicCalculatorTest extends TestCase
 {
-    public function testGetHarmonicsForInstrument()
+    public function testFindHarmonics()
     {
-        $instrument = new Violin();
+        $instrument = Instrument::fromPreset('violin');
         $calculator = new HarmonicCalculator();
 
         // Sounding pitch (as a note name), and the possible harmonic positions
@@ -49,12 +49,12 @@ class HarmonicCalculatorTest extends TestCase
         $actual = array_map(function ($expectation) use ($instrument, $calculator) {
             list($soundingNoteName,) = $expectation;
             $result = [];
-            $harmonics = $calculator->getHarmonicsForSoundingNote(Note::fromName($soundingNoteName), $instrument);
+            $harmonics = $calculator->findHarmonics(Note::fromName($soundingNoteName), $instrument);
             foreach ($harmonics as $harmonic) {
-                $stringName = Note::fromFrequency($harmonic->getString()->getStoppedFrequency())->getName();
+                $stringName = Note::fromFrequency($harmonic->getString()->getFrequency())->getName();
                 $result[$stringName][] = [
-                    round($harmonic->getBaseStop(), 2),
-                    round($harmonic->getHalfStop(), 2),
+                    round($harmonic->getBaseStop()->getStringLength(), 2),
+                    round($harmonic->getHalfStop()->getStringLength(), 2),
                 ];
             }
 
