@@ -18,5 +18,5 @@ interface InstrumentStringInterface extends VibratingStringInterface
      *
      * @return float
      */
-    public function getLength(): float;
+    public function getPhysicalLength(): float;
 }

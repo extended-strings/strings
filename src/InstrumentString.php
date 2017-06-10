@@ -6,13 +6,13 @@ namespace ExtendedStrings\Strings;
 
 class InstrumentString extends VibratingString implements InstrumentStringInterface
 {
-    private $length;
+    private $physicalLength;
     private $number;
 
-    public function __construct(float $frequency, float $length, int $number)
+    public function __construct(float $frequency, float $physicalLength, int $number)
     {
         $this->number = $number;
-        $this->length = $length;
+        $this->physicalLength = $physicalLength;
 
         parent::__construct($frequency);
     }
@@ -28,8 +28,8 @@ class InstrumentString extends VibratingString implements InstrumentStringInterf
     /**
      * {@inheritdoc}
      */
-    public function getLength(): float
+    public function getPhysicalLength(): float
     {
-        return $this->length;
+        return $this->physicalLength;
     }
 }

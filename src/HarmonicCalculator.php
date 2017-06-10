@@ -62,18 +62,31 @@ class HarmonicCalculator
      */
     private function validateDistance(Harmonic $harmonic): bool
     {
-        $string = $harmonic->getString();
-        $physicalStringLength = ($string instanceof InstrumentStringInterface)
-            ? $string->getLength()
-            : 500.0;
         if ($harmonic->isNatural()) {
-            return $harmonic->getBaseStop()->getStringLength() * $physicalStringLength >= $this->minDistance;
+            return true;
         }
-        $distance = ($harmonic->getBaseStop()->getStringLength()
-                - $harmonic->getHalfStop()->getStringLength()
-            ) * $physicalStringLength;
+        $distance = $this->getPhysicalDistance($harmonic);
 
         return $distance >= $this->minDistance && $distance <= $this->maxDistance;
+    }
+
+    /**
+     * Calculate the physical distance between two nodes of a harmonic.
+     *
+     * @param \ExtendedStrings\Strings\Harmonic $harmonic
+     *
+     * @return float
+     */
+    private function getPhysicalDistance(Harmonic $harmonic): float
+    {
+        $string = $harmonic->getString();
+        $physicalLength = ($string instanceof InstrumentStringInterface)
+            ? $string->getPhysicalLength()
+            : 500.0;
+        $basePhysical = $harmonic->getBaseStop()->getStringLength() * $physicalLength;
+        $halfStopPhysical = $harmonic->getHalfStop()->getStringLength() * $physicalLength;
+
+        return $basePhysical - $halfStopPhysical;
     }
 
     /**
