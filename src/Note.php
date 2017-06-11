@@ -16,16 +16,21 @@ class Note
     const ACCIDENTAL_THREE_QUARTER_SHARP = '¾♯';
     const ACCIDENTAL_THREE_QUARTER_FLAT = '¾♭';
 
+    const PATTERN_ACCIDENTAL_SHARP = '([♯s#]|sharp)';
+    const PATTERN_ACCIDENTAL_FLAT = '([♭fb]|flat)';
+    const PATTERN_ACCIDENTAL_QUARTER = '(quarter|¼|1\/4)[ -]?';
+    const PATTERN_ACCIDENTAL_3_QUARTER = '((three|3)[ -]quarter|¾|3\/4)[ -]?';
+
     private static $accidentalPatterns = [
         '' => self::ACCIDENTAL_NATURAL,
-        "([♭fb]|\u{266D}|flat)" => self::ACCIDENTAL_FLAT,
-        "([♯s#]|\u{266F}|sharp)" => self::ACCIDENTAL_SHARP,
-        '(¼♭|\-|quarter[ -]flat)' => self::ACCIDENTAL_QUARTER_FLAT,
-        '(¼♯|\+|quarter[ -]sharp)' => self::ACCIDENTAL_QUARTER_SHARP,
-        '(𝄫|♭♭|bb|double[ -]flat)' => self::ACCIDENTAL_DOUBLE_FLAT,
-        '(𝄪|x|##|double[ -]sharp)' => self::ACCIDENTAL_DOUBLE_SHARP,
-        '(¾♭|b\-|(three|3)[ -]quarter[ -]flat)' => self::ACCIDENTAL_THREE_QUARTER_FLAT,
-        '(¾♭|#\+|(three|3)[ -]quarter[ -]sharp)' => self::ACCIDENTAL_THREE_QUARTER_SHARP,
+        self::PATTERN_ACCIDENTAL_FLAT => self::ACCIDENTAL_FLAT,
+        self::PATTERN_ACCIDENTAL_SHARP => self::ACCIDENTAL_SHARP,
+        '(\-|' . self::PATTERN_ACCIDENTAL_QUARTER . self::PATTERN_ACCIDENTAL_FLAT . ')' => self::ACCIDENTAL_QUARTER_FLAT,
+        '(\+|' . self::PATTERN_ACCIDENTAL_QUARTER . self::PATTERN_ACCIDENTAL_SHARP . ')' => self::ACCIDENTAL_QUARTER_SHARP,
+        '(𝄫|bb|double[ -]' . self::PATTERN_ACCIDENTAL_FLAT . ')' => self::ACCIDENTAL_DOUBLE_FLAT,
+        '(𝄪|♯♯|##|double[ -]' . self::PATTERN_ACCIDENTAL_SHARP . ')' => self::ACCIDENTAL_DOUBLE_SHARP,
+        '(' . self::PATTERN_ACCIDENTAL_FLAT . '\-|' . self::PATTERN_ACCIDENTAL_3_QUARTER . self::PATTERN_ACCIDENTAL_FLAT . ')' => self::ACCIDENTAL_THREE_QUARTER_FLAT,
+        '(' . self::PATTERN_ACCIDENTAL_SHARP . '\+|' . self::PATTERN_ACCIDENTAL_3_QUARTER . self::PATTERN_ACCIDENTAL_SHARP . ')' => self::ACCIDENTAL_THREE_QUARTER_SHARP,
     ];
 
     private static $accidentalCents = [
@@ -257,7 +262,7 @@ class Note
         $accidental = trim($accidental);
 
         foreach (self::$accidentalPatterns as $pattern => $replacement) {
-            if (preg_match('/^' . $pattern . '$/iu', $accidental)) {
+            if ($accidental === $replacement || preg_match('/^' . $pattern . '$/iu', $accidental)) {
                 return $replacement;
             }
         }
