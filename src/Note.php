@@ -87,6 +87,10 @@ class Note
      */
     private function __construct(string $name, string $accidental, int $octave, float $difference)
     {
+        if ($octave > 1000) {
+            throw new \InvalidArgumentException(sprintf('Invalid octave: %d', $octave));
+        }
+
         $this->name = $name;
         $this->accidental = $accidental;
         $this->octave = $octave;
