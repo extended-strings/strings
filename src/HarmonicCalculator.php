@@ -8,6 +8,7 @@ class HarmonicCalculator
 {
     private $minDistance = 1.0;
     private $maxDistance = 120.0;
+    private $minBowedDistance = 20.0;
 
     /**
      * Returns a list of possible harmonics that produce a given sounding note.
@@ -44,11 +45,13 @@ class HarmonicCalculator
      *
      * @param float $minDistance
      * @param float $maxDistance
+     * @param float $minBowedDistance
      */
-    public function setDistanceConstraints(float $minDistance, float $maxDistance)
+    public function setDistanceConstraints(float $minDistance, float $maxDistance, float $minBowedDistance)
     {
         $this->minDistance = $minDistance;
         $this->maxDistance = $maxDistance;
+        $this->minBowedDistance = $minBowedDistance;
     }
 
     /**
@@ -62,31 +65,28 @@ class HarmonicCalculator
      */
     private function validateDistance(Harmonic $harmonic): bool
     {
-        if ($harmonic->isNatural()) {
-            return true;
-        }
-        $distance = $this->getPhysicalDistance($harmonic);
+        $physicalLength = $this->getPhysicalStringLength($harmonic);
+        $basePhysical = $harmonic->getBaseStop()->getStringLength() * $physicalLength;
+        $halfStopPhysical = $harmonic->getHalfStop()->getStringLength() * $physicalLength;
+        $distance = $basePhysical - $halfStopPhysical;
+        $bowedDistance = $halfStopPhysical;
 
-        return $distance >= $this->minDistance && $distance <= $this->maxDistance;
+        return (
+            $harmonic->isNatural()
+            || ($distance >= $this->minDistance && $distance <= $this->maxDistance)
+          ) && $bowedDistance >= $this->minBowedDistance;
     }
 
     /**
-     * Calculate the physical distance between two nodes of a harmonic.
-     *
-     * @param \ExtendedStrings\Strings\Harmonic $harmonic
-     *
-     * @return float
+     * Find the physical length of the harmonic's string.
      */
-    private function getPhysicalDistance(Harmonic $harmonic): float
+    private function getPhysicalStringLength(Harmonic $harmonic): float
     {
-        $string = $harmonic->getString();
-        $physicalLength = ($string instanceof InstrumentStringInterface)
-            ? $string->getPhysicalLength()
-            : 500.0;
-        $basePhysical = $harmonic->getBaseStop()->getStringLength() * $physicalLength;
-        $halfStopPhysical = $harmonic->getHalfStop()->getStringLength() * $physicalLength;
+      $string = $harmonic->getString();
 
-        return $basePhysical - $halfStopPhysical;
+      return $string instanceof InstrumentStringInterface
+          ? $string->getPhysicalLength()
+          : 500.0;
     }
 
     /**
