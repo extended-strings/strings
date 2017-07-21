@@ -50,12 +50,12 @@ class Instrument implements InstrumentInterface
                 break;
 
             case 'viola':
-                $names = ['A4', 'D3', 'G3', 'C3'];
+                $names = ['A4', 'D4', 'G3', 'C3'];
                 $length = 410;
                 break;
 
             case 'cello':
-                $names = ['A3', 'D2', 'G2', 'C2'];
+                $names = ['A3', 'D3', 'G2', 'C2'];
                 $length = 690;
                 break;
 
