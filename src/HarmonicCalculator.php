@@ -6,9 +6,10 @@ namespace ExtendedStrings\Strings;
 
 class HarmonicCalculator
 {
-    private $minDistance = 1.0;
-    private $maxDistance = 120.0;
+    private $minStopDistance = 1.0;
+    private $maxStopDistance = 120.0;
     private $minBowedDistance = 20.0;
+    private $maxSoundingNoteDifference = 50.0;
 
     /**
      * Returns a list of possible harmonics that produce a given sounding note.
@@ -16,69 +17,105 @@ class HarmonicCalculator
      * @param Note                $soundingNote The desired sounding note of
      *                                          the harmonic.
      * @param InstrumentInterface $instrument   The instrument.
-     * @param float               $tolerance    The maximum deviation (cents)
-     *                                          between the desired sounding
-     *                                          note and a natural harmonic.
      *
      * @return Harmonic[]
      */
-    public function findHarmonics(Note $soundingNote, InstrumentInterface $instrument, float $tolerance = 50.0): array
+    public function findHarmonics(Note $soundingNote, InstrumentInterface $instrument): array
     {
         $harmonics = [];
         foreach ($instrument->getStrings() as $string) {
             $harmonics = array_merge(
                 $harmonics,
-                $this->findNaturalHarmonics($soundingNote, $string, $tolerance),
+                $this->findNaturalHarmonics($soundingNote, $string),
                 $this->findArtificialHarmonics($soundingNote, $string)
             );
         }
 
         $harmonics = array_filter($harmonics, function (Harmonic $harmonic) {
-            return $this->validateDistance($harmonic);
+            return $this->validatePhysicalDistance($harmonic);
         });
 
         return $harmonics;
     }
 
     /**
-     * Set the minimum and maximum distance between harmonic stops (in mm).
+     * Set constraints on the physical distance between harmonic stops.
      *
-     * @param float $minDistance
-     * @param float $maxDistance
-     * @param float $minBowedDistance
+     * @param float $minStopDistance  The minimum distance between stops (mm).
+     * @param float $maxStopDistance  The maximum distance between stops (mm).
+     * @param float $minBowedDistance The minimum distance between the upper
+     *                                harmonic stop and the bridge (mm).
      */
-    public function setDistanceConstraints(float $minDistance, float $maxDistance, float $minBowedDistance)
+    public function setPhysicalDistanceConstraints(float $minStopDistance, float $maxStopDistance, float $minBowedDistance)
     {
-        $this->minDistance = $minDistance;
-        $this->maxDistance = $maxDistance;
+        $this->minStopDistance = $minStopDistance;
+        $this->maxStopDistance = $maxStopDistance;
         $this->minBowedDistance = $minBowedDistance;
+    }
+
+    /**
+     * Set the max difference between the sounding note and natural harmonics.
+     *
+     * @param float $difference The difference in cents (default: 50.0).
+     */
+    public function setMaxSoundingNoteDifference(float $difference)
+    {
+        $this->maxSoundingNoteDifference = $difference;
     }
 
     /**
      * Check that the harmonic is within the configured distance constraints.
      *
-     * @see HarmonicCalculator::setDistanceConstraints()
+     * @see HarmonicCalculator::setPhysicalDistanceConstraints()
      *
      * @param \ExtendedStrings\Strings\Harmonic $harmonic
      *
      * @return bool
      */
-    private function validateDistance(Harmonic $harmonic): bool
+    private function validatePhysicalDistance(Harmonic $harmonic): bool
     {
-        $physicalLength = $this->getPhysicalStringLength($harmonic);
-        $basePhysical = $harmonic->getBaseStop()->getStringLength() * $physicalLength;
-        $halfStopPhysical = $harmonic->getHalfStop()->getStringLength() * $physicalLength;
-        $distance = $basePhysical - $halfStopPhysical;
-        $bowedDistance = $halfStopPhysical;
+        if (!$harmonic->isNatural()) {
+            $distance = $this->getPhysicalDistanceBetweenStops($harmonic);
 
-        return (
-            $harmonic->isNatural()
-            || ($distance >= $this->minDistance && $distance <= $this->maxDistance)
-          ) && $bowedDistance >= $this->minBowedDistance;
+            if ($distance < $this->minStopDistance || $distance > $this->maxStopDistance) {
+                return false;
+            }
+        }
+
+        return $this->getBowedDistance($harmonic) >= $this->minBowedDistance;
+    }
+
+    /**
+     * Find the physical distance between the stops of a harmonic.
+     *
+     * @param \ExtendedStrings\Strings\Harmonic $harmonic
+     *
+     * @return float
+     */
+    private function getPhysicalDistanceBetweenStops(Harmonic $harmonic): float
+    {
+        return ($harmonic->getBaseStop()->getStringLength() - $harmonic->getHalfStop()->getStringLength())
+            * $this->getPhysicalStringLength($harmonic);
+    }
+
+    /**
+     * Find the physical distance between a harmonic's half-stop and the bridge.
+     *
+     * @param \ExtendedStrings\Strings\Harmonic $harmonic
+     *
+     * @return float
+     */
+    private function getBowedDistance(Harmonic $harmonic): float
+    {
+        return $harmonic->getHalfStop()->getStringLength() * $this->getPhysicalStringLength($harmonic);
     }
 
     /**
      * Find the physical length of the harmonic's string.
+     *
+     * @param Harmonic $harmonic
+     *
+     * @return float
      */
     private function getPhysicalStringLength(Harmonic $harmonic): float
     {
@@ -121,11 +158,10 @@ class HarmonicCalculator
      *
      * @param \ExtendedStrings\Strings\Note            $soundingNote
      * @param \ExtendedStrings\Strings\InstrumentStringInterface $string
-     * @param float                                    $tolerance
      *
      * @return Harmonic[]
      */
-    private function findNaturalHarmonics(Note $soundingNote, InstrumentStringInterface $string, float $tolerance = 50.0): array
+    private function findNaturalHarmonics(Note $soundingNote, InstrumentStringInterface $string): array
     {
         $harmonics = [];
         $soundingCents = $soundingNote->getCents();
@@ -137,7 +173,7 @@ class HarmonicCalculator
             // frequency and the desired sounding note.
             $difference = abs(Cent::frequencyToCents($candidateFrequency) - $soundingCents);
 
-            if ($difference <= $tolerance) {
+            if ($difference <= $this->maxSoundingNoteDifference) {
                 $stringLengths = Harmonic::getStringLengthsFromNumber($number, true);
                 foreach ($stringLengths as $stringLength) {
                     $harmonics[] = new Harmonic(new Stop($stringLength), null, $string);
