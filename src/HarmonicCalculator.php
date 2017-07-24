@@ -95,7 +95,7 @@ class HarmonicCalculator
     private function getPhysicalDistanceBetweenStops(Harmonic $harmonic): float
     {
         return ($harmonic->getBaseStop()->getStringLength() - $harmonic->getHalfStop()->getStringLength())
-            * $this->getPhysicalStringLength($harmonic);
+            * $harmonic->getString()->getPhysicalLength();
     }
 
     /**
@@ -107,23 +107,7 @@ class HarmonicCalculator
      */
     private function getBowedDistance(Harmonic $harmonic): float
     {
-        return $harmonic->getHalfStop()->getStringLength() * $this->getPhysicalStringLength($harmonic);
-    }
-
-    /**
-     * Find the physical length of the harmonic's string.
-     *
-     * @param Harmonic $harmonic
-     *
-     * @return float
-     */
-    private function getPhysicalStringLength(Harmonic $harmonic): float
-    {
-      $string = $harmonic->getString();
-
-      return $string instanceof InstrumentStringInterface
-          ? $string->getPhysicalLength()
-          : 500.0;
+        return $harmonic->getHalfStop()->getStringLength() * $harmonic->getString()->getPhysicalLength();
     }
 
     /**
@@ -156,12 +140,12 @@ class HarmonicCalculator
     /**
      * Find the natural harmonics that produce the given sounding note.
      *
-     * @param \ExtendedStrings\Strings\Note            $soundingNote
-     * @param \ExtendedStrings\Strings\InstrumentStringInterface $string
+     * @param \ExtendedStrings\Strings\Note                     $soundingNote
+     * @param \ExtendedStrings\Strings\VibratingStringInterface $string
      *
      * @return Harmonic[]
      */
-    private function findNaturalHarmonics(Note $soundingNote, InstrumentStringInterface $string): array
+    private function findNaturalHarmonics(Note $soundingNote, VibratingStringInterface $string): array
     {
         $harmonics = [];
         $soundingCents = $soundingNote->getCents();

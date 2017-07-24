@@ -11,7 +11,7 @@ class Instrument implements InstrumentInterface
     /**
      * Instrument constructor.
      *
-     * @param InstrumentStringInterface[] $strings
+     * @param VibratingStringInterface[] $strings
      */
     public function __construct(array $strings)
     {
@@ -27,10 +27,9 @@ class Instrument implements InstrumentInterface
     public static function fromNames(array $stringNames, float $length = 500.0): self
     {
         $strings = [];
-        $number = 1;
         foreach ($stringNames as $name) {
             $frequency = Note::fromName($name)->getFrequency();
-            $strings[] = new InstrumentString($frequency, $length, $number++);
+            $strings[] = new VibratingString($frequency, $length);
         }
 
         return new self($strings);

@@ -12,4 +12,11 @@ interface VibratingStringInterface
      * @return float
      */
     public function getFrequency(): float;
+
+    /**
+     * Returns the physical length of the string (in mm).
+     *
+     * @return float
+     */
+    public function getPhysicalLength(): float;
 }

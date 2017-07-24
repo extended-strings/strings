@@ -9,7 +9,7 @@ interface InstrumentInterface
     /**
      * Returns the instrument's strings.
      *
-     * @return InstrumentStringInterface[]
+     * @return VibratingStringInterface[]
      */
     public function getStrings(): array;
 }

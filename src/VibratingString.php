@@ -7,24 +7,33 @@ namespace ExtendedStrings\Strings;
 class VibratingString implements VibratingStringInterface
 {
     private $frequency;
+    private $physicalLength;
 
     /**
      * VibratingString constructor.
      *
-     * @param float $frequency The open string frequency (in Hz).
+     * @param float $frequency      The open string frequency (in Hz).
+     * @param float $physicalLength The physical length of the string (in mm).
      */
-    public function __construct(float $frequency)
+    public function __construct(float $frequency, float $physicalLength = 500.0)
     {
         $this->frequency = $frequency;
+        $this->physicalLength = $physicalLength;
     }
 
     /**
-     * Returns the frequency of the open string (in Hz).
-     *
-     * @return float
+     * {@inheritdoc}
      */
     public function getFrequency(): float
     {
         return $this->frequency;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPhysicalLength(): float
+    {
+        return $this->physicalLength;
     }
 }
