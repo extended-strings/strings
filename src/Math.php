@@ -32,4 +32,17 @@ class Math
     {
         return $x === 0 || abs($x) < self::EPSILON;
     }
+
+    /**
+     * Tests whether a number is greater than another.
+     *
+     * @param float $a
+     * @param float $b
+     *
+     * @return bool
+     */
+    public static function isGreaterThan(float $a, float $b): bool
+    {
+        return $a > $b && $a - $b > self::EPSILON;
+    }
 }

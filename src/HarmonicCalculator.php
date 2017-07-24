@@ -141,7 +141,7 @@ class HarmonicCalculator
         $stringFrequency = $string->getFrequency();
         foreach (range(6, 2) as $number) {
             $fundamental = $soundingNoteFrequency / $number;
-            if ($fundamental > $stringFrequency) {
+            if (Math::isGreaterThan($fundamental, $stringFrequency)) {
                 $baseStop = Stop::fromFrequency($fundamental, $string);
                 $ratio = ($number - 1) / $number;
                 $halfStop = new Stop($ratio * $baseStop->getStringLength());
