@@ -11,12 +11,14 @@ class Stop
     /**
      * Stop constructor.
      *
-     * @param float $stringLength The length of string that is left vibrating,
-     *                            as a fraction.
+     * @param float $stringLength The length of string between this stop and the
+     *                            bridge, as a fraction of the whole string
+     *                            length. A string length of 1.0 indicates an
+     *                            open string.
      */
     public function __construct(float $stringLength)
     {
-        if ($stringLength < 0 || $stringLength > 1) {
+        if ($stringLength <= 0 || $stringLength > 1) {
             throw new \InvalidArgumentException(sprintf('Invalid string length: %f', $stringLength));
         }
 

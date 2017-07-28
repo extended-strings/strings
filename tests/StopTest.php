@@ -52,4 +52,16 @@ class StopTest extends TestCase
         }, $expectations);
         $this->assertEquals($expectations, $actual);
     }
+
+    public function testStringLengthValidation()
+    {
+        $stops = [
+            new Stop(0.1),
+            new Stop(0.5),
+            new Stop(1.0),
+        ];
+        $this->assertEquals(3, count($stops));
+        $this->expectException('\\InvalidArgumentException');
+        new Stop(0.0);
+    }
 }
