@@ -11,10 +11,10 @@ class Stop
     /**
      * Stop constructor.
      *
-     * @param float $stringLength The length of string between this stop and the
-     *                            bridge, as a fraction of the whole string
-     *                            length. A string length of 1.0 indicates an
-     *                            open string.
+     * @param float $stringLength A "string length": the length of string
+     *                            between the stop and the bridge, as a fraction
+     *                            of the whole string. A string length of 1.0
+     *                            indicates an open string.
      */
     public function __construct(float $stringLength)
     {
@@ -44,7 +44,7 @@ class Stop
     }
 
     /**
-     * Returns the frequency of the stop (assuming normal pressure).
+     * Returns the frequency of the stop (assuming normal stop pressure).
      *
      * @param VibratingStringInterface $string
      *
@@ -58,7 +58,9 @@ class Stop
     }
 
     /**
-     * Returns the length of string that is left vibrating, as a fraction.
+     * Returns the string length for the stop.
+     *
+     * @see Stop::__construct() for a definition of "string length"
      *
      * @return float
      */
@@ -70,11 +72,12 @@ class Stop
     /**
      * Convert a number of cents over a string to a string length.
      *
-     * @param float $cents The number of cents between the open string and the
-     *                     stopped pitch.
+     * @see Stop::__construct() for a definition of "string length"
      *
-     * @return float The length of the vibrating string, as a fraction of the
-     * whole string's length.
+     * @param float $cents The number of cents between the open string's pitch
+     *                     and the stopped pitch.
+     *
+     * @return float
      */
     private static function centsToStringLength(float $cents): float
     {
