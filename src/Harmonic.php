@@ -30,7 +30,6 @@ class Harmonic
 
         $this->baseStop = $baseStop;
         $this->halfStop = $halfStop;
-        $this->number = intval(1 / Math::gcd(1, $halfStop->getStringLength() / $baseStop->getStringLength()));
         $this->string = $string;
     }
 
@@ -41,7 +40,7 @@ class Harmonic
      */
     public function getSoundingFrequency(): float
     {
-        return $this->baseStop->getFrequency($this->string) * $this->number;
+        return $this->baseStop->getFrequency($this->string) * $this->getNumber();
     }
 
     /**
@@ -132,6 +131,13 @@ class Harmonic
      */
     public function getNumber(): int
     {
+        if (!isset($this->number)) {
+            $this->number = intval(1 / Math::gcd(
+                1,
+                $this->halfStop->getStringLength() / $this->baseStop->getStringLength()
+            ));
+        }
+
         return $this->number;
     }
 }
