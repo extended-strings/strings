@@ -64,7 +64,7 @@ class Instrument implements InstrumentInterface
                 break;
 
             case 'double bass':
-                $names = ['E1', 'A1', 'D2', 'G2'];
+                $names = ['G2', 'D2', 'A1', 'E1'];
                 $length = 1140;
                 break;
 
