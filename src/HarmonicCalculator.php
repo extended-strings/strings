@@ -46,7 +46,7 @@ class HarmonicCalculator
      * @param float $minBowedDistance The minimum distance between the upper
      *                                harmonic stop and the bridge (mm).
      */
-    public function setPhysicalDistanceConstraints(float $minStopDistance, float $maxStopDistance, float $minBowedDistance)
+    public function setPhysicalDistanceConstraints(float $minStopDistance, float $maxStopDistance, float $minBowedDistance): void
     {
         $this->minStopDistance = $minStopDistance;
         $this->maxStopDistance = $maxStopDistance;
@@ -58,7 +58,7 @@ class HarmonicCalculator
      *
      * @param float $difference The difference in cents (default: 50.0).
      */
-    public function setMaxSoundingNoteDifference(float $difference)
+    public function setMaxSoundingNoteDifference(float $difference): void
     {
         $this->maxSoundingNoteDifference = $difference;
     }
